@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="ms">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kad Imbas Asas Bacaan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Baloo 2', sans-serif;
+      background: linear-gradient(135deg, #E3F2FD 0%, #FFF9C4 50%, #C8E6C9 100%);
+      min-height: 100%;
+      width: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: white;
+      padding: 15px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .home-btn {
+      background: #4FC3F7;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-size: 24px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .home-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1976D2;
+      text-align: center;
+      flex: 1;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-screen {
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .main-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1976D2;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .subtitle {
+      font-size: 20px;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .start-btn {
+      background: #FF6B6B;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 20px 60px;
+      font-size: 32px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 40px;
+      box-shadow: 0 6px 20px rgba(255,107,107,0.4);
+      transition: all 0.3s;
+      font-family: 'Baloo 2', sans-serif;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255,107,107,0.5);
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .category-btn {
+      background: white;
+      border: 4px solid #FFD54F;
+      border-radius: 20px;
+      padding: 30px 20px;
+      font-size: 22px;
+      font-weight: 600;
+      color: #1976D2;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      font-family: 'Baloo 2', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      border-color: #FFC107;
+    }
+
+    .category-icon {
+      font-size: 40px;
+    }
+
+    .flashcard-screen {
+      display: none;
+      width: 100%;
+      max-width: 700px;
+      text-align: center;
+    }
+
+    .flashcard-screen.active {
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn 0.4s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-container {
+      background: white;
+      border-radius: 30px;
+      padding: 60px 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      margin-bottom: 30px;
+      min-height: 350px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .card-illustration {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+
+    .card-main-text {
+      font-size: 120px;
+      font-weight: 700;
+      color: #FF6B6B;
+      margin: 20px 0;
+      line-height: 1;
+    }
+
+    .card-pronunciation {
+      font-size: 24px;
+      color: #666;
+      margin-top: 15px;
+    }
+
+    .card-helper {
+      font-size: 18px;
+      color: #888;
+      margin-top: 10px;
+    }
+
+    .progress-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .progress-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #D0D0D0;
+      transition: all 0.3s;
+    }
+
+    .progress-dot.active {
+      background: #4FC3F7;
+      transform: scale(1.3);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .nav-btn {
+      background: #4FC3F7;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Baloo 2', sans-serif;
+      box-shadow: 0 4px 15px rgba(79,195,247,0.3);
+    }
+
+    .nav-btn:hover {
+      background: #29B6F6;
+      transform: translateY(-2px);
+    }
+
+    .nav-btn:disabled {
+      background: #B0BEC5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .random-btn {
+      background: #FFD54F;
+      color: #1976D2;
+    }
+
+    .random-btn:hover {
+      background: #FFC107;
+    }
+
+    .back-btn {
+      background: #81C784;
+    }
+
+    .back-btn:hover {
+      background: #66BB6A;
+    }
+
+    .fullscreen-btn {
+      background: #9C27B0;
+    }
+
+    .fullscreen-btn:hover {
+      background: #7B1FA2;
+    }
+
+    .fullscreen-mode {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #E3F2FD 0%, #FFF9C4 50%, #C8E6C9 100%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 20px;
+    }
+
+    .fullscreen-card {
+      background: white;
+      border-radius: 30px;
+      padding: 80px 60px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+      max-width: 900px;
+      width: 90%;
+      text-align: center;
+      animation: slideIn 0.4s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .fullscreen-card .card-main-text {
+      font-size: 180px;
+      margin: 30px 0;
+    }
+
+    .fullscreen-card .card-illustration {
+      font-size: 100px;
+    }
+
+    .fullscreen-card .card-pronunciation {
+      font-size: 36px;
+      margin-top: 25px;
+    }
+
+    .fullscreen-card .card-helper {
+      font-size: 28px;
+      margin-top: 15px;
+    }
+
+    .fullscreen-hint {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    .fullscreen-exit {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      z-index: 10000;
+    }
+
+    .fullscreen-exit:hover {
+      background: white;
+      transform: scale(1.1);
+    }
+
+    .footer {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+
+    .footer-tip {
+      font-size: 16px;
+      color: #666;
+      margin: 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 600px) {
+      .main-title {
+        font-size: 36px;
+      }
+
+      .start-btn {
+        font-size: 24px;
+        padding: 15px 40px;
+      }
+
+      .category-btn {
+        font-size: 18px;
+        padding: 20px 15px;
+      }
+
+      .card-main-text {
+        font-size: 80px;
+      }
+
+      .card-container {
+        padding: 40px 20px;
+        min-height: 280px;
+      }
+
+      .nav-btn {
+        padding: 12px 20px;
+        font-size: 16px;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <header class="header"><button class="home-btn" id="homeBtn" onclick="showHome()">🏠</button>
+    <div class="header-title" id="headerTitle">
+     Kad Imbas Asas Bacaan
+    </div>
+    <div style="width: 54px;"></div>
+   </header>
+   <main class="main-content"><!-- Home Screen -->
+    <div class="home-screen" id="homeScreen">
+     <div class="main-title" id="mainTitle">
+      Kad Imbas Asas Bacaan
+     </div>
+     <div class="subtitle">
+      📚 Belajar Membaca dengan Ceria! ✨
+     </div><button class="start-btn" id="startBtn" onclick="showCategories()">Mula</button>
+     <div class="category-grid hidden" id="categoryGrid"><button class="category-btn" onclick="showFlashcards('letters')"> <span class="category-icon">🔤</span> Huruf &amp; Bunyi </button> <button class="category-btn" onclick="showFlashcards('syllables')"> <span class="category-icon">📝</span> Suku Kata </button> <button class="category-btn" onclick="showFlashcards('words')"> <span class="category-icon">📖</span> Perkataan Mudah </button>
+     </div>
+    </div><!-- Flashcard Screen -->
+    <div class="flashcard-screen" id="flashcardScreen">
+     <div class="progress-indicator" id="progressIndicator"></div>
+     <div class="card-container" id="cardContainer">
+      <div class="card-illustration" id="cardIllustration"></div>
+      <div class="card-main-text" id="cardMainText"></div>
+      <div class="card-pronunciation" id="cardPronunciation"></div>
+      <div class="card-helper" id="cardHelper"></div>
+     </div>
+     <div class="nav-buttons"><button class="nav-btn back-btn" onclick="showHome()">⟵ Kembali</button> <button class="nav-btn" id="prevBtn" onclick="previousCard()">⟵ Sebelumnya</button> <button class="nav-btn random-btn" onclick="randomCard()">🔀 Rawak</button> <button class="nav-btn" id="nextBtn" onclick="nextCard()">Seterusnya ⟶</button> <button class="nav-btn fullscreen-btn" onclick="enterFullscreen()">⛶ Skrin Penuh</button>
+     </div>
+    </div>
+   </main>
+   <footer class="footer">
+    <p class="footer-tip" id="footerTip">Tip ibu bapa: Baca bersama anak, ulang 3 kali setiap kad.</p>
+   </footer>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: "Kad Imbas Asas Bacaan",
+      start_button_text: "Mula",
+      footer_tip: "Tip ibu bapa: Baca bersama anak, ulang 3 kali setiap kad.",
+      primary_color: "#FF6B6B",
+      secondary_color: "#4FC3F7",
+      text_color: "#1976D2",
+      background_start: "#E3F2FD",
+      background_end: "#C8E6C9",
+      font_family: "'Baloo 2', sans-serif",
+      font_size: 16
+    };
+
+    const flashcardData = {
+      letters: [
+        { main: "A", pronunciation: "Sebutan: a", helper: "Huruf vokal pertama" },
+        { main: "I", pronunciation: "Sebutan: i", helper: "Huruf vokal" },
+        { main: "U", pronunciation: "Sebutan: u", helper: "Huruf vokal" },
+        { main: "E", pronunciation: "Sebutan: e", helper: "Huruf vokal" },
+        { main: "O", pronunciation: "Sebutan: o", helper: "Huruf vokal" },
+        { main: "B", pronunciation: "Sebutan: be", helper: "ba, bi, bu, be, bo" },
+        { main: "C", pronunciation: "Sebutan: ce", helper: "ca, ci, cu, ce, co" },
+        { main: "D", pronunciation: "Sebutan: de", helper: "da, di, du, de, do" },
+        { main: "F", pronunciation: "Sebutan: ef", helper: "fa, fi, fu, fe, fo" },
+        { main: "G", pronunciation: "Sebutan: ge", helper: "ga, gi, gu, ge, go" },
+        { main: "H", pronunciation: "Sebutan: ha", helper: "ha, hi, hu, he, ho" },
+        { main: "J", pronunciation: "Sebutan: je", helper: "ja, ji, ju, je, jo" },
+        { main: "K", pronunciation: "Sebutan: ka", helper: "ka, ki, ku, ke, ko" },
+        { main: "L", pronunciation: "Sebutan: el", helper: "la, li, lu, le, lo" },
+        { main: "M", pronunciation: "Sebutan: em", helper: "ma, mi, mu, me, mo" },
+        { main: "N", pronunciation: "Sebutan: en", helper: "na, ni, nu, ne, no" },
+        { main: "P", pronunciation: "Sebutan: pe", helper: "pa, pi, pu, pe, po" },
+        { main: "R", pronunciation: "Sebutan: er", helper: "ra, ri, ru, re, ro" },
+        { main: "S", pronunciation: "Sebutan: es", helper: "sa, si, su, se, so" },
+        { main: "T", pronunciation: "Sebutan: te", helper: "ta, ti, tu, te, to" },
+        { main: "V", pronunciation: "Sebutan: ve", helper: "va, vi, vu, ve, vo" },
+        { main: "W", pronunciation: "Sebutan: we", helper: "wa, wi, wu, we, wo" },
+        { main: "Y", pronunciation: "Sebutan: ye", helper: "ya, yi, yu, ye, yo" },
+        { main: "Z", pronunciation: "Sebutan: zed", helper: "za, zi, zu, ze, zo" }
+      ],
+      syllables: [
+        { main: "a", pronunciation: "Sebutan: a", helper: "🟦 Vokal asas", category: "vokal" },
+        { main: "i", pronunciation: "Sebutan: i", helper: "🟦 Vokal asas", category: "vokal" },
+        { main: "u", pronunciation: "Sebutan: u", helper: "🟦 Vokal asas", category: "vokal" },
+        { main: "ba", pronunciation: "Sebutan: ba", helper: "🟦 KV: b + a", category: "kv" },
+        { main: "bi", pronunciation: "Sebutan: bi", helper: "🟦 KV: b + i", category: "kv" },
+        { main: "bu", pronunciation: "Sebutan: bu", helper: "🟦 KV: b + u", category: "kv" },
+        { main: "ca", pronunciation: "Sebutan: ca", helper: "🟦 KV: c + a", category: "kv" },
+        { main: "ci", pronunciation: "Sebutan: ci", helper: "🟦 KV: c + i", category: "kv" },
+        { main: "cu", pronunciation: "Sebutan: cu", helper: "🟦 KV: c + u", category: "kv" },
+        { main: "da", pronunciation: "Sebutan: da", helper: "🟦 KV: d + a", category: "kv" },
+        { main: "di", pronunciation: "Sebutan: di", helper: "🟦 KV: d + i", category: "kv" },
+        { main: "du", pronunciation: "Sebutan: du", helper: "🟦 KV: d + u", category: "kv" },
+        { main: "fa", pronunciation: "Sebutan: fa", helper: "🟦 KV: f + a", category: "kv" },
+        { main: "fi", pronunciation: "Sebutan: fi", helper: "🟦 KV: f + i", category: "kv" },
+        { main: "fu", pronunciation: "Sebutan: fu", helper: "🟦 KV: f + u", category: "kv" },
+        { main: "ga", pronunciation: "Sebutan: ga", helper: "🟦 KV: g + a", category: "kv" },
+        { main: "gi", pronunciation: "Sebutan: gi", helper: "🟦 KV: g + i", category: "kv" },
+        { main: "gu", pronunciation: "Sebutan: gu", helper: "🟦 KV: g + u", category: "kv" },
+        { main: "ha", pronunciation: "Sebutan: ha", helper: "🟦 KV: h + a", category: "kv" },
+        { main: "hi", pronunciation: "Sebutan: hi", helper: "🟦 KV: h + i", category: "kv" },
+        { main: "hu", pronunciation: "Sebutan: hu", helper: "🟦 KV: h + u", category: "kv" },
+        { main: "ja", pronunciation: "Sebutan: ja", helper: "🟦 KV: j + a", category: "kv" },
+        { main: "ji", pronunciation: "Sebutan: ji", helper: "🟦 KV: j + i", category: "kv" },
+        { main: "ju", pronunciation: "Sebutan: ju", helper: "🟦 KV: j + u", category: "kv" },
+        { main: "ka", pronunciation: "Sebutan: ka", helper: "🟦 KV: k + a", category: "kv" },
+        { main: "ki", pronunciation: "Sebutan: ki", helper: "🟦 KV: k + i", category: "kv" },
+        { main: "ku", pronunciation: "Sebutan: ku", helper: "🟦 KV: k + u", category: "kv" },
+        { main: "la", pronunciation: "Sebutan: la", helper: "🟦 KV: l + a", category: "kv" },
+        { main: "li", pronunciation: "Sebutan: li", helper: "🟦 KV: l + i", category: "kv" },
+        { main: "lu", pronunciation: "Sebutan: lu", helper: "🟦 KV: l + u", category: "kv" },
+        { main: "ma", pronunciation: "Sebutan: ma", helper: "🟦 KV: m + a", category: "kv" },
+        { main: "mi", pronunciation: "Sebutan: mi", helper: "🟦 KV: m + i", category: "kv" },
+        { main: "mu", pronunciation: "Sebutan: mu", helper: "🟦 KV: m + u", category: "kv" },
+        { main: "na", pronunciation: "Sebutan: na", helper: "🟦 KV: n + a", category: "kv" },
+        { main: "ni", pronunciation: "Sebutan: ni", helper: "🟦 KV: n + i", category: "kv" },
+        { main: "nu", pronunciation: "Sebutan: nu", helper: "🟦 KV: n + u", category: "kv" },
+        { main: "pa", pronunciation: "Sebutan: pa", helper: "🟦 KV: p + a", category: "kv" },
+        { main: "pi", pronunciation: "Sebutan: pi", helper: "🟦 KV: p + i", category: "kv" },
+        { main: "pu", pronunciation: "Sebutan: pu", helper: "🟦 KV: p + u", category: "kv" },
+        { main: "ra", pronunciation: "Sebutan: ra", helper: "🟦 KV: r + a", category: "kv" },
+        { main: "ri", pronunciation: "Sebutan: ri", helper: "🟦 KV: r + i", category: "kv" },
+        { main: "ru", pronunciation: "Sebutan: ru", helper: "🟦 KV: r + u", category: "kv" },
+        { main: "sa", pronunciation: "Sebutan: sa", helper: "🟦 KV: s + a", category: "kv" },
+        { main: "si", pronunciation: "Sebutan: si", helper: "🟦 KV: s + i", category: "kv" },
+        { main: "su", pronunciation: "Sebutan: su", helper: "🟦 KV: s + u", category: "kv" },
+        { main: "ta", pronunciation: "Sebutan: ta", helper: "🟦 KV: t + a", category: "kv" },
+        { main: "ti", pronunciation: "Sebutan: ti", helper: "🟦 KV: t + i", category: "kv" },
+        { main: "tu", pronunciation: "Sebutan: tu", helper: "🟦 KV: t + u", category: "kv" },
+        { main: "va", pronunciation: "Sebutan: va", helper: "🟦 KV: v + a", category: "kv" },
+        { main: "vi", pronunciation: "Sebutan: vi", helper: "🟦 KV: v + i", category: "kv" },
+        { main: "vu", pronunciation: "Sebutan: vu", helper: "🟦 KV: v + u", category: "kv" },
+        { main: "wa", pronunciation: "Sebutan: wa", helper: "🟦 KV: w + a", category: "kv" },
+        { main: "wi", pronunciation: "Sebutan: wi", helper: "🟦 KV: w + i", category: "kv" },
+        { main: "wu", pronunciation: "Sebutan: wu", helper: "🟦 KV: w + u", category: "kv" },
+        { main: "ya", pronunciation: "Sebutan: ya", helper: "🟦 KV: y + a", category: "kv" },
+        { main: "yi", pronunciation: "Sebutan: yi", helper: "🟦 KV: y + i", category: "kv" },
+        { main: "yu", pronunciation: "Sebutan: yu", helper: "🟦 KV: y + u", category: "kv" },
+        { main: "za", pronunciation: "Sebutan: za", helper: "🟦 KV: z + a", category: "kv" },
+        { main: "zi", pronunciation: "Sebutan: zi", helper: "🟦 KV: z + i", category: "kv" },
+        { main: "zu", pronunciation: "Sebutan: zu", helper: "🟦 KV: z + u", category: "kv" },
+        { main: "ban", pronunciation: "Sebutan: ban", helper: "🟩 KVK: b + a + n", category: "kvk" },
+        { main: "bin", pronunciation: "Sebutan: bin", helper: "🟩 KVK: b + i + n", category: "kvk" },
+        { main: "bun", pronunciation: "Sebutan: bun", helper: "🟩 KVK: b + u + n", category: "kvk" },
+        { main: "can", pronunciation: "Sebutan: can", helper: "🟩 KVK: c + a + n", category: "kvk" },
+        { main: "cin", pronunciation: "Sebutan: cin", helper: "🟩 KVK: c + i + n", category: "kvk" },
+        { main: "cun", pronunciation: "Sebutan: cun", helper: "🟩 KVK: c + u + n", category: "kvk" },
+        { main: "dan", pronunciation: "Sebutan: dan", helper: "🟩 KVK: d + a + n", category: "kvk" },
+        { main: "din", pronunciation: "Sebutan: din", helper: "🟩 KVK: d + i + n", category: "kvk" },
+        { main: "dun", pronunciation: "Sebutan: dun", helper: "🟩 KVK: d + u + n", category: "kvk" },
+        { main: "fan", pronunciation: "Sebutan: fan", helper: "🟩 KVK: f + a + n", category: "kvk" },
+        { main: "fin", pronunciation: "Sebutan: fin", helper: "🟩 KVK: f + i + n", category: "kvk" },
+        { main: "fun", pronunciation: "Sebutan: fun", helper: "🟩 KVK: f + u + n", category: "kvk" },
+        { main: "gan", pronunciation: "Sebutan: gan", helper: "🟩 KVK: g + a + n", category: "kvk" },
+        { main: "gin", pronunciation: "Sebutan: gin", helper: "🟩 KVK: g + i + n", category: "kvk" },
+        { main: "gun", pronunciation: "Sebutan: gun", helper: "🟩 KVK: g + u + n", category: "kvk" },
+        { main: "han", pronunciation: "Sebutan: han", helper: "🟩 KVK: h + a + n", category: "kvk" },
+        { main: "hin", pronunciation: "Sebutan: hin", helper: "🟩 KVK: h + i + n", category: "kvk" },
+        { main: "hun", pronunciation: "Sebutan: hun", helper: "🟩 KVK: h + u + n", category: "kvk" },
+        { main: "jan", pronunciation: "Sebutan: jan", helper: "🟩 KVK: j + a + n", category: "kvk" },
+        { main: "jin", pronunciation: "Sebutan: jin", helper: "🟩 KVK: j + i + n", category: "kvk" },
+        { main: "jun", pronunciation: "Sebutan: jun", helper: "🟩 KVK: j + u + n", category: "kvk" },
+        { main: "kan", pronunciation: "Sebutan: kan", helper: "🟩 KVK: k + a + n", category: "kvk" },
+        { main: "kin", pronunciation: "Sebutan: kin", helper: "🟩 KVK: k + i + n", category: "kvk" },
+        { main: "kun", pronunciation: "Sebutan: kun", helper: "🟩 KVK: k + u + n", category: "kvk" },
+        { main: "lan", pronunciation: "Sebutan: lan", helper: "🟩 KVK: l + a + n", category: "kvk" },
+        { main: "lin", pronunciation: "Sebutan: lin", helper: "🟩 KVK: l + i + n", category: "kvk" },
+        { main: "lun", pronunciation: "Sebutan: lun", helper: "🟩 KVK: l + u + n", category: "kvk" },
+        { main: "man", pronunciation: "Sebutan: man", helper: "🟩 KVK: m + a + n", category: "kvk" },
+        { main: "min", pronunciation: "Sebutan: min", helper: "🟩 KVK: m + i + n", category: "kvk" },
+        { main: "mun", pronunciation: "Sebutan: mun", helper: "🟩 KVK: m + u + n", category: "kvk" },
+        { main: "nan", pronunciation: "Sebutan: nan", helper: "🟩 KVK: n + a + n", category: "kvk" },
+        { main: "nin", pronunciation: "Sebutan: nin", helper: "🟩 KVK: n + i + n", category: "kvk" },
+        { main: "nun", pronunciation: "Sebutan: nun", helper: "🟩 KVK: n + u + n", category: "kvk" },
+        { main: "pan", pronunciation: "Sebutan: pan", helper: "🟩 KVK: p + a + n", category: "kvk" },
+        { main: "pin", pronunciation: "Sebutan: pin", helper: "🟩 KVK: p + i + n", category: "kvk" },
+        { main: "pun", pronunciation: "Sebutan: pun", helper: "🟩 KVK: p + u + n", category: "kvk" },
+        { main: "ran", pronunciation: "Sebutan: ran", helper: "🟩 KVK: r + a + n", category: "kvk" },
+        { main: "rin", pronunciation: "Sebutan: rin", helper: "🟩 KVK: r + i + n", category: "kvk" },
+        { main: "run", pronunciation: "Sebutan: run", helper: "🟩 KVK: r + u + n", category: "kvk" },
+        { main: "san", pronunciation: "Sebutan: san", helper: "🟩 KVK: s + a + n", category: "kvk" },
+        { main: "sin", pronunciation: "Sebutan: sin", helper: "🟩 KVK: s + i + n", category: "kvk" },
+        { main: "sun", pronunciation: "Sebutan: sun", helper: "🟩 KVK: s + u + n", category: "kvk" },
+        { main: "tan", pronunciation: "Sebutan: tan", helper: "🟩 KVK: t + a + n", category: "kvk" },
+        { main: "tin", pronunciation: "Sebutan: tin", helper: "🟩 KVK: t + i + n", category: "kvk" },
+        { main: "tun", pronunciation: "Sebutan: tun", helper: "🟩 KVK: t + u + n", category: "kvk" },
+        { main: "nga", pronunciation: "Sebutan: nga", helper: "🟥 Huruf berganding: ng + a", category: "berganding" },
+        { main: "ngi", pronunciation: "Sebutan: ngi", helper: "🟥 Huruf berganding: ng + i", category: "berganding" },
+        { main: "ngu", pronunciation: "Sebutan: ngu", helper: "🟥 Huruf berganding: ng + u", category: "berganding" },
+        { main: "nge", pronunciation: "Sebutan: nge", helper: "🟥 Huruf berganding: ng + e", category: "berganding" },
+        { main: "ngo", pronunciation: "Sebutan: ngo", helper: "🟥 Huruf berganding: ng + o", category: "berganding" },
+        { main: "ngan", pronunciation: "Sebutan: ngan", helper: "🟥 Huruf berganding: ng + a + n", category: "berganding" },
+        { main: "ngin", pronunciation: "Sebutan: ngin", helper: "🟥 Huruf berganding: ng + i + n", category: "berganding" },
+        { main: "ngun", pronunciation: "Sebutan: ngun", helper: "🟥 Huruf berganding: ng + u + n", category: "berganding" },
+        { main: "nya", pronunciation: "Sebutan: nya", helper: "🟥 Huruf berganding: ny + a", category: "berganding" },
+        { main: "nyi", pronunciation: "Sebutan: nyi", helper: "🟥 Huruf berganding: ny + i", category: "berganding" },
+        { main: "nyu", pronunciation: "Sebutan: nyu", helper: "🟥 Huruf berganding: ny + u", category: "berganding" },
+        { main: "nye", pronunciation: "Sebutan: nye", helper: "🟥 Huruf berganding: ny + e", category: "berganding" },
+        { main: "nyo", pronunciation: "Sebutan: nyo", helper: "🟥 Huruf berganding: ny + o", category: "berganding" },
+        { main: "nyam", pronunciation: "Sebutan: nyam", helper: "🟥 Huruf berganding: ny + a + m", category: "berganding" },
+        { main: "nyan", pronunciation: "Sebutan: nyan", helper: "🟥 Huruf berganding: ny + a + n", category: "berganding" },
+        { main: "nyor", pronunciation: "Sebutan: nyor", helper: "🟥 Huruf berganding: ny + o + r", category: "berganding" },
+        { main: "sya", pronunciation: "Sebutan: sya", helper: "🟥 Huruf berganding: sy + a", category: "berganding" },
+        { main: "syi", pronunciation: "Sebutan: syi", helper: "🟥 Huruf berganding: sy + i", category: "berganding" },
+        { main: "syu", pronunciation: "Sebutan: syu", helper: "🟥 Huruf berganding: sy + u", category: "berganding" },
+        { main: "sye", pronunciation: "Sebutan: sye", helper: "🟥 Huruf berganding: sy + e", category: "berganding" },
+        { main: "syo", pronunciation: "Sebutan: syo", helper: "🟥 Huruf berganding: sy + o", category: "berganding" },
+        { main: "syar", pronunciation: "Sebutan: syar", helper: "🟥 Huruf berganding: sy + a + r", category: "berganding" },
+        { main: "syur", pronunciation: "Sebutan: syur", helper: "🟥 Huruf berganding: sy + u + r", category: "berganding" },
+        { main: "kha", pronunciation: "Sebutan: kha", helper: "🟥 Huruf berganding: kh + a", category: "berganding" },
+        { main: "khi", pronunciation: "Sebutan: khi", helper: "🟥 Huruf berganding: kh + i", category: "berganding" },
+        { main: "khu", pronunciation: "Sebutan: khu", helper: "🟥 Huruf berganding: kh + u", category: "berganding" },
+        { main: "khe", pronunciation: "Sebutan: khe", helper: "🟥 Huruf berganding: kh + e", category: "berganding" },
+        { main: "kho", pronunciation: "Sebutan: kho", helper: "🟥 Huruf berganding: kh + o", category: "berganding" }
+      ],
+      words: [
+        { main: "ba-ca", pronunciation: "Sebutan: ba-ca", helper: "🟧 Suku kata: ba + ca", icon: "📖" },
+        { main: "ka-wa", pronunciation: "Sebutan: ka-wa", helper: "🟧 Suku kata: ka + wa", icon: "☕" },
+        { main: "sa-ya", pronunciation: "Sebutan: sa-ya", helper: "🟧 Suku kata: sa + ya", icon: "🙋" },
+        { main: "ma-ma", pronunciation: "Sebutan: ma-ma", helper: "🟧 Suku kata: ma + ma", icon: "👩" },
+        { main: "pa-pa", pronunciation: "Sebutan: pa-pa", helper: "🟧 Suku kata: pa + pa", icon: "👨" },
+        { main: "la-su", pronunciation: "Sebutan: la-su", helper: "🟧 Suku kata: la + su", icon: "🥄" },
+        { main: "ka-tu", pronunciation: "Sebutan: ka-tu", helper: "🟧 Suku kata: ka + tu", icon: "📦" },
+        { main: "ma-si", pronunciation: "Sebutan: ma-si", helper: "🟧 Suku kata: ma + si", icon: "🧂" },
+        { main: "sa-ku", pronunciation: "Sebutan: sa-ku", helper: "🟧 Suku kata: sa + ku", icon: "👖" },
+        { main: "la-ri", pronunciation: "Sebutan: la-ri", helper: "Suku kata: la + ri", icon: "🏃" },
+        { main: "ma-kan", pronunciation: "Sebutan: ma-kan", helper: "Suku kata: ma + kan", icon: "🍽️" },
+        { main: "ku-da", pronunciation: "Sebutan: ku-da", helper: "Suku kata: ku + da", icon: "🐴" },
+        { main: "na-ma", pronunciation: "Sebutan: na-ma", helper: "Suku kata: na + ma", icon: "📝" },
+        { main: "bu-ku", pronunciation: "Sebutan: bu-ku", helper: "Suku kata: bu + ku", icon: "📚" },
+        { main: "pi-tu", pronunciation: "Sebutan: pi-tu", helper: "Suku kata: pi + tu", icon: "🚪" },
+        { main: "bi-ru", pronunciation: "Sebutan: bi-ru", helper: "Suku kata: bi + ru", icon: "🔵" },
+        { main: "me-ja", pronunciation: "Sebutan: me-ja", helper: "Suku kata: me + ja", icon: "🪑" },
+        { main: "ba-ju", pronunciation: "Sebutan: ba-ju", helper: "Suku kata: ba + ju", icon: "👕" },
+        { main: "ta-li", pronunciation: "Sebutan: ta-li", helper: "Suku kata: ta + li", icon: "🪢" },
+        { main: "su-su", pronunciation: "Sebutan: su-su", helper: "Suku kata: su + su", icon: "🥛" }
+      ]
+    };
+
+    let currentCategory = '';
+    let currentIndex = 0;
+    let currentCards = [];
+
+    function showHome() {
+      document.getElementById('homeScreen').classList.remove('hidden');
+      document.getElementById('flashcardScreen').classList.remove('active');
+      document.getElementById('categoryGrid').classList.add('hidden');
+      document.getElementById('startBtn').classList.remove('hidden');
+      document.getElementById('headerTitle').textContent = window.elementSdk?.config?.main_title || defaultConfig.main_title;
+    }
+
+    function showCategories() {
+      document.getElementById('startBtn').classList.add('hidden');
+      document.getElementById('categoryGrid').classList.remove('hidden');
+    }
+
+    function showFlashcards(category) {
+      currentCategory = category;
+      currentCards = flashcardData[category];
+      currentIndex = 0;
+      
+      document.getElementById('homeScreen').classList.add('hidden');
+      document.getElementById('flashcardScreen').classList.add('active');
+      
+      updateCard();
+      updateProgressIndicator();
+    }
+
+    function updateCard() {
+      const card = currentCards[currentIndex];
+      const cardContainer = document.getElementById('cardContainer');
+      
+      cardContainer.style.animation = 'none';
+      setTimeout(() => {
+        cardContainer.style.animation = 'fadeIn 0.4s ease-in';
+      }, 10);
+      
+      document.getElementById('cardMainText').textContent = card.main;
+      document.getElementById('cardPronunciation').textContent = card.pronunciation;
+      document.getElementById('cardHelper').textContent = card.helper;
+      
+      const illustrationEl = document.getElementById('cardIllustration');
+      if (card.icon) {
+        illustrationEl.textContent = card.icon;
+        illustrationEl.style.display = 'block';
+      } else {
+        illustrationEl.style.display = 'none';
+      }
+      
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').disabled = currentIndex === currentCards.length - 1;
+      
+      updateProgressIndicator();
+    }
+
+    function updateProgressIndicator() {
+      const indicator = document.getElementById('progressIndicator');
+      indicator.innerHTML = '';
+      
+      const maxDots = Math.min(currentCards.length, 10);
+      for (let i = 0; i < maxDots; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        
+        const cardIndex = Math.floor(i * currentCards.length / maxDots);
+        if (currentIndex >= cardIndex && currentIndex < cardIndex + Math.ceil(currentCards.length / maxDots)) {
+          dot.classList.add('active');
+        }
+        
+        indicator.appendChild(dot);
+      }
+    }
+
+    function nextCard() {
+      if (currentIndex < currentCards.length - 1) {
+        currentIndex++;
+        updateCard();
+      }
+    }
+
+    function previousCard() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCard();
+      }
+    }
+
+    function randomCard() {
+      const newIndex = Math.floor(Math.random() * currentCards.length);
+      currentIndex = newIndex;
+      updateCard();
+    }
+
+    function enterFullscreen() {
+      const fullscreenDiv = document.createElement('div');
+      fullscreenDiv.className = 'fullscreen-mode';
+      fullscreenDiv.id = 'fullscreenMode';
+      
+      const card = currentCards[currentIndex];
+      
+      fullscreenDiv.innerHTML = `
+        <button class="fullscreen-exit" id="fsExitBtn">✕</button>
+        <div class="fullscreen-card">
+          <div class="card-illustration" style="display: ${card.icon ? 'block' : 'none'}">${card.icon || ''}</div>
+          <div class="card-main-text">${card.main}</div>
+          <div class="card-pronunciation">${card.pronunciation}</div>
+          <div class="card-helper">${card.helper}</div>
+        </div>
+        <div class="fullscreen-hint">👆 Tap skrin untuk kad seterusnya</div>
+      `;
+      
+      const exitBtn = fullscreenDiv.querySelector('#fsExitBtn');
+      exitBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        exitFullscreen();
+      });
+      
+      fullscreenDiv.onclick = function(e) {
+        if (e.target === fullscreenDiv || e.target.closest('.fullscreen-card')) {
+          nextCardFullscreen();
+        }
+      };
+      
+      document.body.appendChild(fullscreenDiv);
+      applyFullscreenColors();
+    }
+
+    function exitFullscreen() {
+      const fullscreenDiv = document.getElementById('fullscreenMode');
+      if (fullscreenDiv) {
+        fullscreenDiv.remove();
+      }
+    }
+
+    function nextCardFullscreen() {
+      if (currentIndex < currentCards.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0;
+      }
+      
+      updateCard();
+      
+      const fullscreenDiv = document.getElementById('fullscreenMode');
+      if (fullscreenDiv) {
+        const card = currentCards[currentIndex];
+        const fullscreenCard = fullscreenDiv.querySelector('.fullscreen-card');
+        
+        fullscreenCard.style.animation = 'none';
+        setTimeout(() => {
+          fullscreenCard.style.animation = 'slideIn 0.4s ease-out';
+        }, 10);
+        
+        fullscreenCard.querySelector('.card-illustration').textContent = card.icon || '';
+        fullscreenCard.querySelector('.card-illustration').style.display = card.icon ? 'block' : 'none';
+        fullscreenCard.querySelector('.card-main-text').textContent = card.main;
+        fullscreenCard.querySelector('.card-pronunciation').textContent = card.pronunciation;
+        fullscreenCard.querySelector('.card-helper').textContent = card.helper;
+        
+        applyFullscreenColors();
+      }
+    }
+
+    function applyFullscreenColors() {
+      const config = window.elementSdk?.config || defaultConfig;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const bgStart = config.background_start || defaultConfig.background_start;
+      const bgEnd = config.background_end || defaultConfig.background_end;
+      
+      const fullscreenDiv = document.getElementById('fullscreenMode');
+      if (fullscreenDiv) {
+        fullscreenDiv.style.background = `linear-gradient(135deg, ${bgStart} 0%, #FFF9C4 50%, ${bgEnd} 100%)`;
+        const mainText = fullscreenDiv.querySelector('.card-main-text');
+        if (mainText) {
+          mainText.style.color = primaryColor;
+        }
+      }
+    }
+
+    async function onConfigChange(config) {
+      const baseFont = (config.font_family || defaultConfig.font_family) + ", sans-serif";
+      const baseFontSize = config.font_size || defaultConfig.font_size;
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const bgStart = config.background_start || defaultConfig.background_start;
+      const bgEnd = config.background_end || defaultConfig.background_end;
+      
+      document.body.style.fontFamily = baseFont;
+      document.body.style.background = `linear-gradient(135deg, ${bgStart} 0%, #FFF9C4 50%, ${bgEnd} 100%)`;
+      
+      document.getElementById('mainTitle').textContent = config.main_title || defaultConfig.main_title;
+      document.getElementById('headerTitle').textContent = config.main_title || defaultConfig.main_title;
+      document.getElementById('startBtn').textContent = config.start_button_text || defaultConfig.start_button_text;
+      document.getElementById('footerTip').textContent = config.footer_tip || defaultConfig.footer_tip;
+      
+      document.getElementById('mainTitle').style.fontSize = `${baseFontSize * 3}px`;
+      document.getElementById('mainTitle').style.color = textColor;
+      
+      document.getElementById('headerTitle').style.fontSize = `${baseFontSize * 1.25}px`;
+      document.getElementById('headerTitle').style.color = textColor;
+      
+      document.getElementById('startBtn').style.fontSize = `${baseFontSize * 2}px`;
+      document.getElementById('startBtn').style.background = primaryColor;
+      
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      categoryBtns.forEach(btn => {
+        btn.style.fontSize = `${baseFontSize * 1.375}px`;
+        btn.style.color = textColor;
+      });
+      
+      document.getElementById('cardMainText').style.fontSize = `${baseFontSize * 7.5}px`;
+      document.getElementById('cardMainText').style.color = primaryColor;
+      
+      document.getElementById('cardPronunciation').style.fontSize = `${baseFontSize * 1.5}px`;
+      document.getElementById('cardHelper').style.fontSize = `${baseFontSize * 1.125}px`;
+      
+      const navBtns = document.querySelectorAll('.nav-btn');
+      navBtns.forEach(btn => {
+        btn.style.fontSize = `${baseFontSize * 1.25}px`;
+        if (!btn.classList.contains('random-btn') && !btn.classList.contains('back-btn')) {
+          btn.style.background = secondaryColor;
+        }
+      });
+      
+      document.getElementById('footerTip').style.fontSize = `${baseFontSize}px`;
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange,
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (value) => {
+              config.secondary_color = value;
+              window.elementSdk.setConfig({ secondary_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.background_start || defaultConfig.background_start,
+            set: (value) => {
+              config.background_start = value;
+              window.elementSdk.setConfig({ background_start: value });
+            }
+          },
+          {
+            get: () => config.background_end || defaultConfig.background_end,
+            set: (value) => {
+              config.background_end = value;
+              window.elementSdk.setConfig({ background_end: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ["main_title", config.main_title || defaultConfig.main_title],
+        ["start_button_text", config.start_button_text || defaultConfig.start_button_text],
+        ["footer_tip", config.footer_tip || defaultConfig.footer_tip]
+      ])
+    });
+
+    onConfigChange(window.elementSdk.config);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a5a299bb364cac4',t:'MTc2NDMzNjAyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
